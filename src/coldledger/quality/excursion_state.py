@@ -45,6 +45,11 @@ ALLOWED = {
 }
 if STATES:
     ALLOWED[STATES[-1]] = frozenset()
+# A settled case may be reopened into investigation when new evidence forces a
+# superseding decision. Reopening is a forward revision, never a rollback:
+# prior transitions remain in the event history.
+ALLOWED['adjudicated'] = ALLOWED['adjudicated'] | frozenset({'investigating'})
+ALLOWED['closed'] = frozenset({'investigating'})
 
 
 def apply(current: ExcursionState, command: Command) -> tuple[ExcursionState, Transition]:
